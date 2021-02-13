@@ -1,0 +1,10 @@
+To set up the database for the first time:
+
+> [Navigate to the repository's psql directory]
+> psql.exe -U [postgres username]
+> [enter password if necessary]
+> CREATE DATABASE tndb;
+> \c tndb
+> \i db_init.sql
+
+Voila
