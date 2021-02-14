@@ -20,9 +20,20 @@ class Study extends Component {
     }
   
     processInitialForm() {
-        console.log("topic: " + this.state.topic + ", other pages: " + this.state.otherPages);
-        this.setState({ otherPages: this.otherPages })
-        // fetch available prereqs and set state
+        console.log("topic: " + this.studyTopic + ", other pages: " + this.otherPages);
+        fetch("http://localhost:9000/study?q=" + this.studyTopic, {
+            method: 'GET',
+            body: {
+                'otherPages': this.otherPages,
+            }
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            console.log("data: " + JSON.stringify(data));
+            this.setState({ availablePrereqs: data, topic: this.studyTopic, otherPages: this.otherPages });
+        });
     }
 
     addPrereq(p) {
@@ -32,6 +43,21 @@ class Study extends Component {
 
     processActualForm() {
         // submit everything to toposort, set this.state.notes and this.state.formFilled
+        fetch("http://localhost:9000/study/guide", {
+            method: 'GET',
+            body: {
+                'topic': this.studyTopic,
+                'otherPages': this.otherPages,
+                'includedPrereqs': this.state.includedPrereqs
+            }
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            console.log("data: " + JSON.stringify(data));
+            this.setState({ notes: data, formFilled: true });
+        });
     }
 
     render() {

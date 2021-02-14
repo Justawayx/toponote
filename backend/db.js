@@ -24,6 +24,18 @@ const getUserNotes = (d_user_id) => {
 		});
 }
 
+// GET all notes for a user on a specific topic
+const getUserNotesByTopic = (d_user_id, topic) => {
+	return new Promise(
+		function (resolve, reject) {
+			pool.query('SELECT * FROM notes WHERE user_id=$1 AND title=$2', [d_user_id, topic],
+				(error, results) => {
+					if (error) { reject(error); }
+					resolve(results.rows);
+				});
+		});
+}
+
 // Get all pages corresponding to a user
 const getUserPages = (d_user_id) => {
 	return new Promise(
@@ -277,6 +289,7 @@ const removeNotePrereqTag = (d_note_id, d_tag_id) => {
 module.exports = {
 	
 	getUserNotes,
+	getUserNotesByTopic,
 	getUserPages,
 	getNotePrereqTags, 
 	getNoteInfoTags, 
