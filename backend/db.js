@@ -25,7 +25,6 @@ const getUserNotes = (d_user_id) => {
 }
 
 // Get all pages corresponding to a user
-
 const getUserPages = (d_user_id) => {
 	return new Promise(
 		function (resolve, reject) {
