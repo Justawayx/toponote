@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import Note from './components/Note';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import './App.css';
 
 class Pages extends Component {
@@ -11,12 +13,17 @@ class Pages extends Component {
         curr_page_name: "",
         curr_page_id: -1,
         notes: [],
-        pages: []
+        pages: [],
+        curr_note: ""
       };
       this.newPageName = React.createRef();
+      this.newNoteName = React.createRef();
+      this.newNoteTags = React.createRef();
+      this.newNotePrereqs = React.createRef();
       this.handleClick = this.handleClick.bind(this);
       this.getPages = this.getPages.bind(this);
       this.deletePage = this.deletePage.bind(this);
+      this.createNote = this.createNote.bind(this);
     }
 
     componentDidMount() {
@@ -60,6 +67,18 @@ class Pages extends Component {
         });
     }
 
+    createNote() {
+        fetch("http://localhost:9000/notes/", {
+            method: 'POST',
+            body: {
+                'title': this.newNoteName,
+                'body': this.state.curr_note,
+                'tags': this.newNoteTags.toLowerCase().split(",").map(Function.prototype.call, String.prototype.trim),
+                'prereqs': this.newNotePrereqs.toLowerCase().split(",").map(Function.prototype.call, String.prototype.trim)
+            }
+        }).then(() => this.forceUpdate());  
+    }
+
     render() {
       console.log("state: " + JSON.stringify(this.state));
       if (this.state.curr_page_name !== -1 && this.state.curr_page_name !== "") {
@@ -69,8 +88,30 @@ class Pages extends Component {
                 <h1>Notes for {this.state.curr_page_name}</h1>
                 {/* if no notes, say "You have no notes in this page yet" */}
                 {this.state.notes.map(n => {
-                    return <Note title={n.title} body={n.body} tags={n.tags} prereqs={n.prereqs}/>
+                    return <Note title={n.title} body={n.body} tags={n.tags.join(", ")} prereqs={n.prereqs.join(", ")}/>
                 })}
+
+                <form onSubmit={this.createNote}>
+                <label>Subject
+                    <input type="text" ref={this.newNoteName} />
+                </label>
+                <br/>
+                <CKEditor
+                    editor={ ClassicEditor }
+                    data=""
+                    onChange={ ( event, editor ) => {this.setState({ curr_note: editor.getData() });} }
+                />
+                <br/>
+                <label>Tags
+                    <input type="text" placeholder="comma separated" ref={this.newNoteTags} />
+                </label>
+                <br/>
+                <label>Prereqs
+                    <input type="text" placeholder="comma separated" ref={this.newNotePrereqs} />
+                </label>
+                <br/>
+                <input type="submit" name="Submit"/>
+                </form>
             </div>
         );
       } else {

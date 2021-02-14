@@ -9,12 +9,6 @@ class Home extends Component {
       super(props);
       this.onSearchEnter = this.onSearchEnter.bind(this);
       this.onSearchSubmit = this.onSearchSubmit.bind(this);
-      this.makeStudyGuide = this.makeStudyGuide.bind(this);
-    }
-  
-    makeStudyGuide(e) {
-      console.log("making study guide!");
-      console.log("event: " + e);
     }
   
     onSearchEnter(val, e) {
@@ -35,7 +29,10 @@ class Home extends Component {
           </header>
           <SearchField placeholder="Search notes" onEnter={this.onSearchEnter} onSearchClick={this.onSearchSubmit}/>
           <br/>
-          <Button variant="primary" size="lg" onClick={this.makeStudyGuide}>Make study guide</Button>
+          <Button variant="primary" size="lg" onClick={(e) => {
+            e.preventDefault();
+            window.location.href='/Study';
+            }}>Make study guide</Button>
         </div>
       );
     }

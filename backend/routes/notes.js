@@ -4,7 +4,7 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
     console.log("get notes req: " + req);
-    res.send([{"title": "my title", "body": "<h2>paragra<b>ph</b><h2>", "tags": ["a", "b"], "prereqs": ["c","d"]}]);
+    res.send([{"title": "my title", "body": "parag<b>rap</b>h", "tags": ["a", "b"], "prereqs": ["c","d"]}]);
 });
 
 module.exports = router;

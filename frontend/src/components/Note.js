@@ -9,7 +9,7 @@ const Note = (props) => {
             <Card.Body>
                 <Card.Title>{props.title}</Card.Title>
                 <Card.Text>Card Text: <div dangerouslySetInnerHTML={{__html: props.body}}/> </Card.Text>
-                <br/> <br/>
+                <br/>
                 <Card.Text>Tags: {props.tags}</Card.Text>
                 <Card.Text>Prerequisite Knowledge: {props.prereqs}</Card.Text>
             </Card.Body>
