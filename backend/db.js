@@ -24,6 +24,19 @@ const getUserNotes = (d_user_id) => {
 		});
 }
 
+// Get all pages corresponding to a user
+
+const getUserPages = (d_user_id) => {
+	return new Promise(
+		function (resolve, reject) {
+			pool.query('SELECT * FROM pages WHERE user_id=$1', [d_user_id],
+				(error, results) => {
+					if (error) { reject(error); }
+					resolve(results.rows);
+				});
+		});
+}
+
 // Get all prereq tags (ids and names) corresponding to a note ID
 
 const getNotePrereqTags = (d_note_id) => {
@@ -250,6 +263,7 @@ const removeNotePrereqTag = (d_note_id, d_tag_id) => {
 module.exports = {
 	
 	getUserNotes,
+	getUserPages,
 	getNotePrereqTags, 
 	getNoteInfoTags, 
 	getUserTags, 
