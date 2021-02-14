@@ -24,7 +24,7 @@ class Pages extends Component {
     }
 
     getPages() {
-        fetch("http://localhost:9000/pages")
+        fetch("http://localhost:9000/pages", { method: 'GET' })
             .then(response => {
                 console.log("response: " + JSON.stringify(response));
                 return response.json();
