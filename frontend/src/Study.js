@@ -73,13 +73,14 @@ class Study extends Component {
       } else if (!this.state.topic || !this.state.topic.length) {
         return (
             <div>
-              <form onSubmit={this.processInitialForm}>
+              <form onSubmit={() => { console.log("submitted!"); }}>
                 <label>Study Topic:
                     <input type="text" ref={this.studyTopic}/>
                 </label>
                 <label>Include Outside Pages?
                     <input type="checkbox" ref={this.otherPages}/>
                 </label>
+								<Button onClick={() => {console.log("ey b0ss!"); this.processInitialForm();}}>Submit</Button>
                 <input type="submit" name="Next"/>
               </form>
             </div>
@@ -93,6 +94,7 @@ class Study extends Component {
                         return <div>{p} <input type="checkbox" onChange={()=>this.addPrereq(p)}/></div>
                     })}
                 </label>
+								<Button onClick={() => {console.log("second time!"); this.processActualForm();}}>Submit</Button>
                 <input type="submit" name="Make Study Guide!"/>
                 </form>
             </div>
