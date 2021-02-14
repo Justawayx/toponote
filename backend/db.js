@@ -151,6 +151,21 @@ const insertPage = (d_user_id, d_time, d_page_name) => {
 		})
 }
 
+// Updates name of a page
+// d_page_id: int | d_new_page_name: string
+// conflict not possible?
+
+const updatePageName = (d_page_id, d_new_page_name) => {
+	return new Promise (
+		function (resolve, reject) {
+			pool.query('UPDATE pages SET name=$1 WHERE id=$2', [d_page_id, d_new_page_name], 
+				(error, results) => {
+					if (error) { reject(error); }
+					resolve(`Page name has been updated`);
+				});
+		})
+}
+
 // Deletes page by ID
 
 const deletePage = (d_page_id) => {
@@ -274,7 +289,8 @@ module.exports = {
 	
 	insertTag, 
 	
-	insertPage, 
+	insertPage,
+	updatePageName,
 	deletePage, 
 	
 	insertNote, 
