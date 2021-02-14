@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.send(["class1", "class2"]);
+  res.send(["page1", "page2"]);
 });
 
 router.get('/getnotes', function(req, res, next) {

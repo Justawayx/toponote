@@ -2,45 +2,45 @@ import React, {Component} from "react";
 import Note from './components/Note';
 import './App.css';
 
-class Classes extends Component {
+class Pages extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        curr_class: "",
+        curr_page: "",
         notes: [],
-        classes: []
+        pages: []
       };
-      this.getClasses = this.getClasses.bind(this);
+      this.getPages = this.getPages.bind(this);
       this.handleClick = this.handleClick.bind(this);
     }
 
     componentWillMount() {
-        this.setState({ curr_class: "", notes: [] });
-        this.getClasses();
+        this.setState({ curr_page: "", notes: [] });
+        this.getPages();
     }
 
-    getClasses() {
-        fetch("http://localhost:9000/classes")
+    getPages() {
+        fetch("http://localhost:9000/pages")
             .then(response => response.json())
             .then(data => {
-                this.setState({ classes: data })
+                this.setState({ pages: data })
             });
     }
 
-    handleClick(className) {
-        fetch("http://localhost:9000/classes/getnotes")
+    handleClick(pageName) {
+        fetch("http://localhost:9000/pages/getnotes")
             .then(response => response.json())
             .then(data => {
-                this.setState({ notes: data, curr_class: className });
+                this.setState({ notes: data, curr_page: pageName });
             });
     }
 
     render() {
-      if (this.state.curr_class.length > 0) {
+      if (this.state.curr_page.length > 0) {
         // render notes
         return (
             <div>
-                <h1>Notes for {this.state.curr_class}</h1>
+                <h1>Notes for {this.state.curr_page}</h1>
                 {this.state.notes.map(n => {
                     return <Note title={n.title} body={n.body} tags={n.tags} prereqs={n.prereqs}/>
                 })}
@@ -49,10 +49,10 @@ class Classes extends Component {
       } else {
         return (
             <div>
-                <h1>My Classes!</h1>
+                <h1>My Pages</h1>
                 <ul>
-                    {this.state.classes.map(c => {
-                        return <li onClick={this.handleClick} data-id={c} key={c}>{c}</li>
+                    {this.state.pages.map(p => {
+                        return <li onClick={this.handleClick} data-id={p} key={p}>{p}</li>
                     })}
                 </ul>
             </div>
@@ -61,4 +61,4 @@ class Classes extends Component {
     }
   }
   
-  export default Classes;
+  export default Pages;
