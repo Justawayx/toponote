@@ -3,7 +3,8 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.send([{"id": 1, "name": "page1"}, {"id": 2, "name": "page2"}]);  // call get pages fxn
+    console.log("get notes req: " + req);
+    res.send([{"title": "my title", "body": "<h2>paragra<b>ph</b><h2>", "tags": ["a", "b"], "prereqs": ["c","d"]}]);
 });
 
 module.exports = router;

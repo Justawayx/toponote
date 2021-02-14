@@ -8,7 +8,7 @@ const Note = (props) => {
         <Card style={{ width: '18rem' }}>
             <Card.Body>
                 <Card.Title>{props.title}</Card.Title>
-                <Card.Text>Card Text: {props.body}</Card.Text>
+                <Card.Text>Card Text: <div dangerouslySetInnerHTML={{__html: props.body}}/> </Card.Text>
                 <br/> <br/>
                 <Card.Text>Tags: {props.tags}</Card.Text>
                 <Card.Text>Prerequisite Knowledge: {props.prereqs}</Card.Text>
