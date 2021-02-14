@@ -15,6 +15,7 @@ CREATE TABLE users (
 CREATE TABLE pages (
 	id SERIAL PRIMARY KEY,
 	user_id INT REFERENCES users(id), -- User who created this page
+	time_created TIMESTAMP NOT NULL, -- store as Pacific timezone
 	name TEXT NOT NULL
 );
 
@@ -57,31 +58,36 @@ CREATE TABLE m2m_note_prereq_tag (
 CREATE VIEW notes_meta AS
 	SELECT id, title, user_id, time_last_modified, pageid FROM notes;
 
--- Get all tags (names) corresponding to a user (ID)
+-- Get all tags (ids and names) corresponding to a user (ID)
 -- based on union of tags of all notes of the user
 CREATE FUNCTION getUserTags (d_user_id INT) RETURNS SETOF TEXT AS
-$$ 
-(SELECT t.name FROM m2m_note_prereq_tag a, tags t, notes n WHERE a.note_id=n.id AND a.tag_id=t.id AND n.user_id=d_user_id) 
-UNION 
-(SELECT t.name FROM m2m_note_info_tag a, tags t, notes n WHERE a.note_id=n.id AND a.tag_id=t.id AND n.user_id=d_user_id)  
-$$ LANGUAGE SQL;
+	$$ 
+	(SELECT t.id, t.name FROM m2m_note_prereq_tag a, tags t, notes n WHERE a.note_id=n.id AND a.tag_id=t.id AND n.user_id=d_user_id) 
+	UNION 
+	(SELECT t.name FROM m2m_note_info_tag a, tags t, notes n WHERE a.note_id=n.id AND a.tag_id=t.id AND n.user_id=d_user_id)  
+	$$ LANGUAGE SQL;
 
 -- Get all notes (IDs) corresponding to a tag (name) for a user (ID)
 -- consider both prereq and info tags
 CREATE FUNCTION getTagUserNotes (d_user_id INT, d_tag_name TEXT) RETURNS SETOF INT AS
-$$ 
-(SELECT a.note_id FROM m2m_note_prereq_tag a, tags t, notes n WHERE a.note_id=n.id AND a.tag_id=t.id AND n.user_id=d_user_id AND t.name=d_tag_name) 
-UNION 
-(SELECT a.note_id FROM m2m_note_info_tag a, tags t, notes n WHERE a.note_id=n.id AND a.tag_id=t.id AND n.user_id=d_user_id AND t.name=d_tag_name)  
-$$ LANGUAGE SQL;
+	$$ 
+	(SELECT a.note_id FROM m2m_note_prereq_tag a, tags t, notes n WHERE a.note_id=n.id AND a.tag_id=t.id AND n.user_id=d_user_id AND t.name=d_tag_name) 
+	UNION 
+	(SELECT a.note_id FROM m2m_note_info_tag a, tags t, notes n WHERE a.note_id=n.id AND a.tag_id=t.id AND n.user_id=d_user_id AND t.name=d_tag_name)  
+	$$ LANGUAGE SQL;
 
--- Get all prereq tags (names) corresponding to a note (ID)
+-- Get all notes (IDs) corresponding to a tag (name) for a user (ID)
+-- consider ONLY info tags
+CREATE FUNCTION getInfoTagUserNotes (d_user_id INT, d_tag_name TEXT) RETURNS SETOF INT AS
+	$$ SELECT a.note_id FROM m2m_note_info_tag a, tags t, notes n WHERE a.note_id=n.id AND a.tag_id=t.id AND n.user_id=d_user_id AND t.name=d_tag_name $$ LANGUAGE SQL;
+
+-- Get all prereq tags (ids and names) corresponding to a note (ID)
 CREATE FUNCTION getNotePrereqTags (d_note_id INT) RETURNS SETOF TEXT AS
-$$ SELECT t.name FROM m2m_note_prereq_tag a, tags t WHERE a.tag_id=t.id AND a.note_id=d_note_id $$ LANGUAGE SQL;
+	$$ SELECT t.id, t.name FROM m2m_note_prereq_tag a, tags t WHERE a.tag_id=t.id AND a.note_id=d_note_id $$ LANGUAGE SQL;
 
--- Get all info tags (names) corresponding to a note (ID)
+-- Get all info tags (ids and names) corresponding to a note (ID)
 CREATE FUNCTION getNoteInfoTags (d_note_id INT) RETURNS SETOF TEXT AS
-$$ SELECT t.name FROM m2m_note_info_tag a, tags t WHERE a.tag_id=t.id AND a.note_id=d_note_id $$ LANGUAGE SQL;
+	$$ SELECT t.id, t.name FROM m2m_note_info_tag a, tags t WHERE a.tag_id=t.id AND a.note_id=d_note_id $$ LANGUAGE SQL;
 
 ----------------------------------
 ------ Initial/static data -------
@@ -92,10 +98,10 @@ INSERT INTO users (id, username, email, pwd_hash) VALUES (DEFAULT, 'Test User', 
 INSERT INTO users (id, username, email, pwd_hash) VALUES (DEFAULT, 'Gannie Ao', 'harrypotter@gmail.com', 'iamawesome');
 
 -- Test pages
-INSERT INTO pages (id, user_id, name) VALUES
-	(DEFAULT, 1, 'CS 143: Databases'), 
-	(DEFAULT, 2, 'HSAR 439 Surrealism'),
-	(DEFAULT, 2, 'Deep Learning Course');
+INSERT INTO pages (id, user_id, time_created, name) VALUES
+	(DEFAULT, 1, NOW(), 'CS 143: Databases'), 
+	(DEFAULT, 2, NOW(), 'HSAR 439 Surrealism'),
+	(DEFAULT, 2, NOW(), 'Deep Learning Course');
 
 -- Test tags
 INSERT INTO tags (id, name) VALUES 
